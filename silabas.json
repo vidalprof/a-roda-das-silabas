@@ -1,0 +1,54 @@
+{
+ "prefixo": "ro_",
+ "voz": "pt-BR-AntonioNeural",
+ "palavras": {
+  "laranja": [
+   "LA",
+   "RAN",
+   "JA"
+  ],
+  "leao": [
+   "LE",
+   "ÃO"
+  ],
+  "limao": [
+   "LI",
+   "MÃO"
+  ],
+  "lobo": [
+   "LO",
+   "BO"
+  ],
+  "luneta": [
+   "LU",
+   "NE",
+   "TA"
+  ],
+  "maca": [
+   "MA",
+   "ÇÃ"
+  ],
+  "menina": [
+   "ME",
+   "NI",
+   "NA"
+  ],
+  "minhoca": [
+   "MI",
+   "NHO",
+   "CA"
+  ],
+  "mola": [
+   "MO",
+   "LA"
+  ],
+  "lata": [
+   "LA",
+   "TA"
+  ],
+  "lupa": [
+   "LU",
+   "PA"
+  ]
+ }
+}
