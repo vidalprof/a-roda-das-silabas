@@ -179,38 +179,46 @@ button{font-family:inherit;cursor:pointer}
 
 /* folha 1 — o desfile: a fila que se percorre com o dedo */
 .desfile{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 4px}
-/* ---------- A RODA DAS SÍLABAS (folha 1) ----------
-   ⚠️ A PRIMEIRA VERSÃO NÃO ERA REDONDA e eu quase a publiquei assim. Tinha o L
-      ao lado de cinco botões em grade 3+2 — funcionava, passava nos portões, e
-      MENTIA: a folha se chama "a roda do L" e a criança via um retângulo. O
-      desenho aqui É o conteúdo — é vendo as vogais em volta de um L parado que
-      ela entende que é sempre o mesmo L.
-   ⚠️ E O MOTIVO DE EU TER FUGIDO DO CÍRCULO ERA REAL: botão girado por
-      `transform` fica bonito e vira armadilha, porque a área que responde ao
-      toque continua sendo o retângulo. A saída é não girar nada: cada vogal é um
-      botão REDONDO de 66px posicionado por `top/left` num raio de 96px. O alvo é
-      o próprio círculo que ela vê, com 66px — acima do piso de 44px que a casa
-      mede até o 2º ano — e com esse raio dois vizinhos ficam a 113px de centro a
-      centro, ou seja, nunca se tocam. */
-.rodacx{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 22px;margin:4px 0 12px}
+/* ---------- A RODA DAS SÍLABAS (folha 1) — ELA GIRA ----------
+   ⚠️ O disco roda por `transform`; o L e a janelinha ficam FORA dele, parados.
+      Se o L rodasse junto, não haveria nada fixo contra o que a vogal se
+      encaixa — e a ideia inteira da folha é "o L fica, a vogal muda".
+   ⚠️ `touch-action:none` no disco: sem isso, o dedo que gira a roda ROLA A
+      PÁGINA junto e a criança nunca consegue virar. E é `touch-action`, não
+      `preventDefault` no touchstart — esse mata o toque (lição paga duas vezes).
+   ⚠️ Alvos: as setas têm 52px e a vogal 66px, acima do piso de 44px que a casa
+      mede até o 2º ano. O disco inteiro também é alvo de arraste. */
+.rodacx{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 22px;margin:4px 0 12px}
+.rodalado{display:flex;flex-direction:column;align-items:center;gap:6px}
 .roda{position:relative;width:258px;height:258px;flex:none;border-radius:50%;
   background:radial-gradient(circle at 50% 45%,#fbfbff 58%,#eef0fb 59%,#f7f8ff 100%);
   border:3px dashed #cfd5f0;box-shadow:0 3px 12px rgba(40,50,90,.08)}
+.roda:focus{outline:4px solid #7d8de0;outline-offset:3px}
+.rdisco{position:absolute;inset:0;border-radius:50%;cursor:grab;
+  -ms-touch-action:none;touch-action:none;-webkit-user-select:none;user-select:none}
+.rdisco:active{cursor:grabbing}
+/* a janelinha: o lugar onde a sílaba nasce, parado no alto */
+.rseta{position:absolute;left:50%;top:-2px;margin-left:-13px;width:26px;height:20px;z-index:3;
+  background:#4b62c9;border-radius:0 0 13px 13px;box-shadow:0 2px 0 #35499e}
 .rmeio{position:absolute;top:50%;left:50%;margin:-38px 0 0 -38px;width:76px;height:76px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;z-index:2;
   font-weight:900;font-size:40px;color:#fff;background:#4b62c9;box-shadow:0 3px 0 #35499e}
 .rvog{position:absolute;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:50%;
   border:3px solid #f0b64a;background:#fff8e8;color:#a06a10;
-  font-family:inherit;font-weight:900;font-size:30px;cursor:pointer;box-shadow:0 3px 0 #e0a534}
-.rvog:active{box-shadow:0 1px 0 #e0a534}
+  font-family:inherit;font-weight:900;font-size:30px;cursor:pointer;box-shadow:0 3px 0 #e0a534;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.rvl{display:block;line-height:1}
 .rvog.acesa{background:#f0b64a;color:#fff;border-color:#c98f22}
+.rsetas{display:flex;align-items:center;gap:10px}
+.rbt{min-width:52px;min-height:52px;border-radius:50%;border:3px solid #4b62c9;background:#fff;
+  color:#4b62c9;font-size:20px;cursor:pointer;font-family:inherit;box-shadow:0 3px 0 #cfd5f0}
+.rbt:active{transform:translateY(2px);box-shadow:0 1px 0 #cfd5f0}
+.rdica{font-weight:800;color:#4b62c9;font-size:15px;letter-spacing:.3px}
 .rmostra{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:132px}
 .rsil{font-size:44px;font-weight:900;color:#2b3566;letter-spacing:2px}
 .rfig{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px}
 .rfig .figgrande{display:block;width:auto;height:clamp(74px,18vw,98px)}
 .rnome{font-weight:800;color:#3a4470;font-size:15px}
-/* ⚠️ em tela estreita a roda encolhe INTEIRA (raio e centro vêm do JS pelo
-   tamanho lido aqui), nunca o alvo: o botão continua com 66px. */
 @media (max-width:430px){ .roda{width:232px;height:232px} }
 .ltdesf{min-width:62px;min-height:64px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;
   cursor:pointer;-webkit-transition:background .2s,border-color .2s,transform .15s;
@@ -1435,7 +1443,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*SILMAP-INI*/var SILMAP = {"LA": ["laranja", 0], "LE": ["leao", 0], "LI": ["limao", 0], "LO": ["lobo", 0], "LU": ["luneta", 0], "MA": ["maca", 0], "ME": ["menina", 0], "MI": ["minhoca", 0], "MO": ["mola", 0]};/*SILMAP-FIM*/
+/*SILMAP-INI*/var SILMAP = {"LA": ["lata", 0], "LE": ["leao", 0], "LI": ["limao", 0], "LO": ["lobo", 0], "LU": ["lupa", 0], "MA": ["mala", 0], "ME": ["menina", 0], "MI": ["minhoca", 0], "MO": ["mola", 0]};/*SILMAP-FIM*/
 /*VOZOK-INI*/var VOZOK = {"1safve5": 1, "1d4es0k": 1, "1s88xtj": 1, "1c2ki26": 1, "ks0483": 1, "1o6ivsf": 1, "s25s4c": 1, "zq7m0j": 1, "kfqaw6": 1, "gopdvw": 1, "qsj0xb": 1, "mqvsj": 1, "poe6tm": 1, "vwur44": 1, "fxlq4p": 1, "ooy2cv": 1, "zhhs6a": 1, "19vn8h2": 1, "a67x4a": 1, "vk7iy4": 1, "rvm646": 1, "117kanz": 1, "a5lldo": 1, "u92uxx": 1, "5pi30o": 1, "18ptpgk": 1, "16nzslz": 1, "3n38fs": 1, "16tmy90": 1, "1guyx4x": 1, "es6uoy": 1, "131ov38": 1, "jqsx0g": 1, "12zwhsz": 1, "1cddv0v": 1, "19n0daw": 1, "kpvwgq": 1, "1t6hbrc": 1, "qqa1pl": 1, "mjdbe7": 1, "7yriex": 1, "akitoa": 1, "1gynwf7": 1, "1f5mnny": 1, "1jcrhsy": 1, "1hx6t3l": 1, "khurb2": 1, "1w7n5eq": 1, "1rve747": 1, "oj0y5g": 1, "spfh5u": 1, "1t3ftsu": 1, "1afxzwm": 1, "rgbyg9": 1, "f9nblr": 1, "1bujfdi": 1, "1ras7lq": 1, "186fhsj": 1, "1qry7oq": 1, "1cu3207": 1, "19ly2bv": 1, "rafbrq": 1, "a57lxz": 1, "ytai3v": 1, "7uhlr4": 1, "1en1y3n": 1, "1r7r563": 1, "1nup9s0": 1, "1qlqvbv": 1, "593e44": 1, "3jbqar": 1, "1yuegnu": 1, "2tbd1b": 1, "102j7pm": 1, "insm89": 1, "1urdwzh": 1, "1jrvh9e": 1, "xmm9vx": 1, "1mi0n2b": 1, "1x37rf2": 1, "1m6boab": 1, "l2fp8y": 1, "b1vyzc": 1, "twrp3z": 1, "1b75bmm": 1, "12bi6d3": 1, "1pvjghk": 1, "1lld85z": 1, "1jh4rll": 1, "1r1dqk6": 1, "or0ibi": 1, "1mo86t4": 1, "1m5sqhu": 1, "nt73hz": 1, "ia2ub7": 1, "1kjxx8f": 1, "1zte7t": 1, "1udxf18": 1, "1870pch": 1, "1hxcx8s": 1, "jau8tp": 1, "l4nznr": 1, "pr48rk": 1, "1getn7l": 1, "1q70k3s": 1, "4pntbb": 1, "1lbeu88": 1, "1m96uti": 1, "qewxre": 1, "cfsvv8": 1, "1k3st9z": 1, "tr5wne": 1, "1ea9e6j": 1, "fm9hpd": 1, "1kj5dyg": 1, "8r5bqf": 1, "1eq5c0e": 1, "of4ihb": 1, "emadfk": 1, "100tbi8": 1, "1a8kgr9": 1, "uf8u21": 1, "1a1xvok": 1, "z2edfc": 1, "1e5xgtx": 1, "1ink304": 1, "vz7r7m": 1, "1exefnz": 1, "13xq4eq": 1, "1r0y1kj": 1, "1e708d5": 1, "1lp5gu6": 1, "1ybtpi7": 1, "11qv5jq": 1, "tsv48p": 1, "lzd7x2": 1, "1ckusk8": 1, "10b6xol": 1, "98spk": 1, "1d9s73k": 1, "1i3wdg1": 1, "175a16h": 1, "gj4az7": 1, "oj84py": 1, "18q5ga6": 1, "129815r": 1, "mq7kt": 1, "1jglqf1": 1, "cnkzp5": 1, "t1pf34": 1, "16912ph": 1, "1j7xtvx": 1, "2uezfa": 1, "15qrk34": 1, "2vac2b": 1, "2vg1hq": 1, "nhlsun": 1, "2v5dz9": 1, "bid2ng": 1, "2voweb": 1, "2vtc3n": 1, "hjre95": 1, "2vw8zu": 1, "2vwpsm": 1, "k1id0r": 1, "k1id5x": 1, "1t4tpd0": 1, "2vxvt0": 1, "1r8zm0l": 1, "rgai44": 1, "37vy6b": 1, "38iifa": 1, "yj4fyh": 1, "mldqo4": 1, "184t2f7": 1, "j429w9": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ---------- as palavras: figura, escrita e sílabas ----------
